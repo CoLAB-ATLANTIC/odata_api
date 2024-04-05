@@ -1,5 +1,5 @@
-# copernicus_api
-Copernicus API makes searching and downloading of Copernicus Sentinel mission images from
+# OData_API
+OData API makes searching and downloading of Copernicus Sentinel mission images from
 [Copernicus Data Space Ecosystem (CDSE)](https://dataspace.copernicus.eu/) easy.
 
 Current supported missions:
