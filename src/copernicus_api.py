@@ -1,3 +1,8 @@
+"""This is an Python API accomodating search and download of Copernicus Sentinel
+mission data products from Copernicus Data Space Ecosystem (CDSE):
+https://dataspace.copernicus.eu/."""
+
+
 from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import cpu_count
 from abc import ABC, abstractmethod
@@ -6,7 +11,10 @@ from tqdm import tqdm
 import pandas as pd
 import requests
 
-from .exceptions import AttributeNotFoundError
+from .exceptions import (AttributeNotFoundError,
+                         AuthorizationError,
+                         DownloadError,
+                         QueryError)
 
 
 CATALOG_URL = "https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection"
@@ -60,10 +68,10 @@ class CopernicusDataspaceAPI(ABC):
             "grant_type": "password",
         }
         try:
-            r = requests.post(TOKEN_URL, data=data)
+            r = requests.post(TOKEN_URL, data=data, timeout=100)
             r.raise_for_status()
         except Exception as e:
-            raise Exception(
+            raise AuthorizationError(
                     f"Access token creation failed. Error: {e} \n"
                     f"\tMake sure your login credentials are correct for"
                     " https://dataspace.copernicus.eu/")
@@ -132,9 +140,9 @@ class CopernicusDataspaceAPI(ABC):
 
         # Send query
         try:
-            json = requests.get(query_str).json()
+            json = requests.get(query_str, timeout=100).json()
         except Exception as e:
-            raise Exception(f"{e.__class__.__name__}: Query failed. Error: {e}")
+            raise QueryError(f"{e.__class__.__name__}: Query failed: {e.args[0]}")
 
         # convert dict into pd.Dataframe
         products = pd.DataFrame.from_dict(json['value'])
@@ -170,7 +178,7 @@ class CopernicusDataspaceAPI(ABC):
             if prod_type in self.prod_types:
                 query_str += f" and contains(Name, '{prod_type}')"
             else:
-                raise ValueError(f"Product type not found. Must be one from " +
+                raise ValueError("Product type not found. Must be one from " +
                                  f"the list: {self.prod_types}")
         if exclude:
             query_str += f" and not contains(Name,'{exclude}')"
@@ -180,7 +188,7 @@ class CopernicusDataspaceAPI(ABC):
             query_str += f"&$orderby=ContentDate/Start {orderby}"
         if limit:
             query_str += f"&$top={limit}"
-        query_str += f"&$expand=Attributes"
+        query_str += "&$expand=Attributes"
         return query_str
 
     def download_by_id(self, uid: str, out_path: Path) -> None:
@@ -202,10 +210,13 @@ class CopernicusDataspaceAPI(ABC):
         session.headers.update(headers)
         response = session.get(url, headers=headers, stream=True)
 
-        with open(str(out_path) + ".zip", "wb") as file:
-            for chunk in response.iter_content(chunk_size=8192):
-                if chunk:
-                    file.write(chunk)
+        try:
+            with open(str(out_path) + ".zip", "wb") as file:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        file.write(chunk)
+        except Exception as e:
+            raise DownloadError(f"Failed to download {out_path.name}\n{e}")
 
     def download_all(
             self,
@@ -238,8 +249,8 @@ class CopernicusDataspaceAPI(ABC):
             try:
                 self.download_by_id(prod_id, out_path=out_file)
             except Exception as e:
-                raise Exception(f"'{e.__class__.__name__}': Failed to download "
-                                f"{prod_name}: {e}")
+                raise DownloadError(f"'{e.__class__.__name__}': "
+                        f"Failed to download {prod_name}: {e.args[0]}")
             finally:
                 if show_progress:
                     pbar.update(1)
@@ -257,7 +268,7 @@ class Sentinel1API(CopernicusDataspaceAPI):
     """Class to download Sentinel-1 products"""
 
     @property
-    def mission(sel):
+    def mission(self):
         return "SENTINEL-1"
 
     @property
@@ -269,7 +280,7 @@ class Sentinel2API(CopernicusDataspaceAPI):
     """Class to download Sentinel-2 products"""
 
     @property
-    def mission(sel):
+    def mission(self):
         return "SENTINEL-2"
 
     @property
@@ -281,7 +292,7 @@ class Sentinel3API(CopernicusDataspaceAPI):
     """Class to download Sentinel-3 products"""
 
     @property
-    def mission(sel):
+    def mission(self):
         return "SENTINEL-3"
 
     @property
@@ -293,7 +304,7 @@ class Sentinel5API(CopernicusDataspaceAPI):
     """Class to download Sentinel-5P products"""
 
     @property
-    def mission(sel):
+    def mission(self):
         return "SENTINEL-5P"
 
     @property
@@ -309,7 +320,7 @@ class Sentinel6API(CopernicusDataspaceAPI):
     """Class to download Sentinel-6 products"""
 
     @property
-    def mission(sel):
+    def mission(self):
         return "SENTINEL-3"
 
     @property
