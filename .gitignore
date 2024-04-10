@@ -1,0 +1,17 @@
+## Ignore Visual Studio code temporary files, build results
+
+# VS Code files for those working on multiple tools
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+.vscode/launch.json
+# Ignore all pycache
+**/__pycache__/
+.env
+# .*
