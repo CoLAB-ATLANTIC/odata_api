@@ -1,4 +1,7 @@
 # OData_API
+
+![Tests](https://github.com/CoLAB-ATLANTIC/odata_api/actions/workflows/ci_utilities.yml/badge.svg)
+
 OData API makes searching and downloading of Copernicus Sentinel mission images from
 [Copernicus Data Space Ecosystem (CDSE)](https://dataspace.copernicus.eu/) easy.
 
