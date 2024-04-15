@@ -2,7 +2,7 @@
 
 ![Tests](https://github.com/CoLAB-ATLANTIC/odata_api/actions/workflows/ci_utilities.yml/badge.svg)
 
-OData API makes searching and downloading of Copernicus Sentinel mission images from
+OData Python API makes searching and downloading of Copernicus Sentinel mission images from
 [Copernicus Data Space Ecosystem (CDSE)](https://dataspace.copernicus.eu/) easy.
 
 Current supported missions:
@@ -11,6 +11,14 @@ Current supported missions:
   - SENTINEL-3
   - SENTINEL-5P
   - SENTINEL-6
+
+## About OData
+[OData](https://documentation.dataspace.copernicus.eu/APIs/OData.html) enables
+access to Copernicus dataspace catalog via HTTPS messages. It is an
+SO/IEC approved, OASIS standard , which is based on https RESTful Application
+Programming Interfaces. It enables resources, which are identified by URLs and
+defined in a data model, to be created and edited using simple HTTPS messages.
+
 
 ## Installation Guide
 1. Clone the repository
@@ -90,3 +98,7 @@ products = api.query(
   )
   api.download_all(products, out_dir='path/to/out_dir')
   ```
+
+## Contributions
+To contribute to the repository, please follow the guidelines in
+[here][contributing]
