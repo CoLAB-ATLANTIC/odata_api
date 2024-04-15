@@ -29,7 +29,7 @@ the guideline:
     git push origin my-branch
     '''
 
-7. Open a pull request on .
+7. Open a pull request.
 
 > [!NOTE]
 > Contributions must be added based on `develop` branch.
