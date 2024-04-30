@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import cpu_count
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import Literal
 from tqdm import tqdm
 import logging as log
 import pandas as pd
@@ -100,7 +101,7 @@ class CopernicusDataspaceAPI(ABC):
             prod_type: str | None = None,
             exclude: str | None = None,
             footprint: str | None = None,
-            orderby: str | None = None,
+            orderby: Literal['asc', 'desc'] | None = None,
             limit: int | None = None,
             **kwargs: list[int] | list[float] | list[str]
         ) -> pd.DataFrame:
@@ -116,7 +117,7 @@ class CopernicusDataspaceAPI(ABC):
             Keyword for product type match in the prod name. Must be one of the
             supported product types. To check the available options call
             `prod_types` attribute of instantiated CopernicusDataspaceAPI class.
-        footprint : str, optional
+        footprint : Literal {'asc', 'desc'}, optional
             Well-Known Text representation of the spatial geometry
             NOTE:
             1. MULTIPOLYGON is currently not supported.
