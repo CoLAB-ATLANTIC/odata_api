@@ -117,14 +117,14 @@ class CopernicusDataspaceAPI(ABC):
             Keyword for product type match in the prod name. Must be one of the
             supported product types. To check the available options call
             `prod_types` attribute of instantiated CopernicusDataspaceAPI class.
-        footprint : Literal {'asc', 'desc'}, optional
+        footprint : str, optional
             Well-Known Text representation of the spatial geometry
             NOTE:
             1. MULTIPOLYGON is currently not supported.
             2. Polygon must start and end with the same point.
             3. Coordinates must be given in EPSG 4326
-        orderby : str, optional
-            Sort order by acquizition time. Can be 'asc' or 'desc'.
+        orderby :  Literal {'asc', 'desc'}, optional
+            Sort order by acquizition time.
         limit : int, optional
             Maximum number of products to return.
         **kwargs : Mapping[str, Union[List[int], List[float], List[str]]]
