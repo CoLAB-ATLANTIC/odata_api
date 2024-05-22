@@ -11,7 +11,7 @@ the guideline:
     cd odata_api
     ```
 
-3. Create a new branch from for your changes:
+3. Create a new branch from `main` for your changes:
     ```
     git checkout -b my-branch
     ```
