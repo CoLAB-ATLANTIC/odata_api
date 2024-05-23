@@ -61,7 +61,7 @@ class TestDownload:
 
         # Ensure that the filtered products meet the filtering criteria
         for _, row in filtered_products.iterrows():
-            assert row['orbitDirection'] in ['ASCENDING']
+            assert row['orbitDirection'] in self.filters['orbitDirection']
 
 
     def test_download_all(self):
