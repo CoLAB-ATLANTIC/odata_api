@@ -18,3 +18,8 @@ class QueryError(Exception):
 
 class DownloadError(Exception):
     pass
+
+
+class FilterByAttributeError(Exception):
+    """Raised when filtering products locally by attributes fails."""
+    pass

@@ -15,6 +15,7 @@ import requests
 
 from .exceptions import (AttributeNotFoundError,
                          AuthorizationError,
+                         FilterByAttributeError,
                          DownloadError,
                          QueryError)
 
@@ -165,8 +166,13 @@ class CopernicusDataspaceAPI(ABC):
         products = products.apply(self.__add_attrs_to_df, axis=1)
         # Apply product specific attribute filter
         if kwargs:
-            products = filter_by_attributes(products, **kwargs
-                                            ).reset_index(drop=True)
+            try:
+                products = filter_by_attributes(products, **kwargs
+                                                ).reset_index(drop=True)
+            except Exception as e:
+                raise FilterByAttributeError(
+                    f"{type(e).__name__} occured while filtering query results "
+                    f"by attributes: {e}")
         return products
 
     def _build_query(
